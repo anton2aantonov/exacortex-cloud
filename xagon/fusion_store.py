@@ -89,14 +89,44 @@ class FusionStore(KnowledgeStore):
         citation_chunks={c['chunk_id'] for c in citations}
         for mid in material_ids:
             for claim in self.list_claims(material_id=mid):
-                if claim['chunk_id'] in citation_chunks and len(claim_rows)<40:
+                if (claim['chunk_id'] in citation_chunks or all(t in claim['text'].casefold() for t in topic.casefold().split())) and len(claim_rows)<40:
                     claim_rows.append({k:claim[k] for k in ('id','material_id','source_version','chunk_id','original_text','text','status','method','evidence','revisions','reviews')})
                     checks.extend(self.get_external_checks(claim['id'])[:10])
         payload={'source_claims':claim_rows,'external_verifications':checks,'user_decisions_notice':'Review пользователя — не независимая проверка','topic':topic,'task':task,'sources':sources,'citations':citations[:40],'comparison':{'method':'lexical_rules','independently_verified':False,'exact_coincidences':equal,'potential_differences':differences[:40],'gaps':gaps},'prompt':prompt,'response_schema':schema,'privacy_notice':'Перед ручной передачей модели проверьте конфиденциальные данные и права. Приложение ничего не отправляет.'}
+        payload['evolution'] = self.claim_comparison(claim_rows)
+        payload['boundaries'] = ['Source Claims', 'External Verification', 'AI Synthesis', 'User Decisions']
+        payload['response_schema']['items'][0].update(claim_ids=[], evidence_ids=[])
+        payload['response_schema']['parent_synthesis_id'] = None
+        payload['prompt'] += '\nУказывайте claim_ids и evidence_ids из пакета. Проверка ссылок не устанавливает истинность. Source Claims, External Verification, AI Synthesis и User Decisions сохраняйте раздельно.'
         key='pkg_'+fingerprint(payload)[:28];payload.update(id=key,created_at=_now())
         with self._connect() as con:
             con.execute('INSERT OR IGNORE INTO fusion_packages VALUES(?,?,?)',(key,canonical(payload),payload['created_at']))
         return self.get_package(key)
+
+    @staticmethod
+    def claim_comparison(claims):
+        """Bounded lexical triage of claim snapshots, never semantic verification."""
+        pairs=[];gaps=[]
+        for i,a in enumerate(claims):
+            if not a['evidence']:
+                gaps.append({'claim_id':a['id'],'reason':'no_evidence'})
+            elif any(e['validity']!='valid' for e in a['evidence']):
+                gaps.append({'claim_id':a['id'],'reason':'invalid_evidence'})
+            for b in claims[i+1:]:
+                if a['material_id']==b['material_id']:continue
+                aw=set(re.findall(r'\w+',a['text'].casefold()))
+                bw=set(re.findall(r'\w+',b['text'].casefold()))
+                neg={'не','нет','not','no','never'}
+                shared=(aw-neg)&(bw-neg)
+                relation=('exact_text' if a['text']==b['text'] else
+                          'potential_conflict' if len(shared)>=2 and bool(aw&neg)!=bool(bw&neg) else
+                          'lexical_overlap' if len(shared)>=2 else None)
+                if relation and len(pairs)<200:
+                    pairs.append({'claim_ids':[a['id'],b['id']], 'relation':relation,
+                                  'requires_analysis':True, 'verified_truth':False})
+        return {'method':'lexical_claim_rules','semantic_analysis':False,
+                'independently_verified':False,'pairs':pairs,'evidence_gaps':gaps,
+                'limitations':'Отрицания и совпадения слов — сигналы для анализа; отсутствие сигнала не означает отсутствие противоречия. Контекст ограничен выбранными фрагментами и 40 утверждениями.'}
 
     def _validate_package(self, package):
         for citation in package['citations']:
@@ -131,6 +161,11 @@ class FusionStore(KnowledgeStore):
         if payload.get('prompt_id') not in (None,expected_prompt):raise ValueError('prompt_id не соответствует экспортированному пакету')
         if model is not None:model=_plain(model,'Модель',300)
         if processed is not None:processed=_plain(processed,'Время модели',100)
+        parent=payload.get('parent_synthesis_id')
+        if parent is not None:
+            previous=self.get_synthesis(parent)
+            if previous['package_id']!=package_id:raise ValueError('Родительская версия относится к другому пакету')
+        if payload.get('package_id',package_id)!=package_id:raise ValueError('package_id не соответствует пакету')
         rows=payload.get('items')
         if not isinstance(rows,list) or not 1<=len(rows)<=30:raise ValueError('Ожидается от 1 до 30 выводов')
         known={c['citation_id'] for c in package['citations']};items=[]
@@ -139,8 +174,15 @@ class FusionStore(KnowledgeStore):
             text=_plain(row.get('text'),'Вывод',20000);kind=row.get('kind','synthesis');refs=row.get('citation_ids',[])
             if kind not in ('synthesis','hypothesis','comparison'):raise ValueError('Неизвестный тип вывода')
             if not isinstance(refs,list) or len(refs)>40 or any(not isinstance(x,str) or x not in known for x in refs):raise ValueError('Неизвестная citation_id; синтез не сохранён')
-            items.append({'id':f'item_{i+1}','original_text':text,'text':text,'kind':kind,'citation_ids':list(dict.fromkeys(refs)),'citation_status':'references_valid' if refs else 'unsupported','verified_truth':False})
-        data={'package_id':package_id,'model':model,'processed_at':processed,'origin':origin,'prompt_id':fingerprint(package['prompt']),'metadata_notice':'Модель и время обработки сообщены пользователем; приложением не проверены','items':items}
+            claim_ids=row.get('claim_ids',[]);evidence_ids=row.get('evidence_ids',[])
+            claims={c['id']:c for c in package.get('source_claims',[])}
+            if not isinstance(claim_ids,list) or any(not isinstance(c,str) or c not in claims for c in claim_ids):
+                raise ValueError('Неизвестная claim_id; синтез не сохранён')
+            evidence={e['id'] for cid in claim_ids for e in claims[cid]['evidence'] if e['validity']=='valid'}
+            if not isinstance(evidence_ids,list) or any(not isinstance(e,str) or e not in evidence for e in evidence_ids):
+                raise ValueError('Evidence не принадлежит указанным Source Claims')
+            items.append({'claim_ids':list(dict.fromkeys(claim_ids)),'evidence_ids':list(dict.fromkeys(evidence_ids)),'id':f'item_{i+1}','original_text':text,'text':text,'kind':kind,'citation_ids':list(dict.fromkeys(refs)),'citation_status':'references_valid' if refs or evidence_ids else 'unsupported','verified_truth':False})
+        data={'input_sha256':fingerprint(payload),'parent_synthesis_id':parent,'package_id':package_id,'model':model,'processed_at':processed,'origin':origin,'prompt_id':fingerprint(package['prompt']),'metadata_notice':'Модель и время обработки сообщены пользователем; приложением не проверены','items':items}
         if 'original_response' in payload:
             _plain(payload['original_response'],'Исходный ручной ответ',768*1024)
             raw=payload['original_response']

@@ -76,11 +76,15 @@ class IntelligenceStore(FusionStore):
 
     def compare_syntheses(self, left_id, right_id):
         a=self.get_synthesis(left_id);b=self.get_synthesis(right_id)
-        pairs=[]
-        for i in range(max(len(a['items']),len(b['items']))):
-            left=a['items'][i] if i<len(a['items']) else None;right=b['items'][i] if i<len(b['items']) else None
-            pairs.append({'position':i+1,'left':left,'right':right,'same':left is not None and right is not None and left['text']==right['text'] and left['citation_ids']==right['citation_ids']})
-        return {'left_id':left_id,'right_id':right_id,'same_package':a['package_id']==b['package_id'],'items':pairs,'warning':'Сопоставление текста по позиции, не проверка истинности или качества модели.'}
+        def key(item):
+            return fingerprint({k:item.get(k,[]) for k in ('text','kind','citation_ids','claim_ids','evidence_ids')})
+        left={key(x):x for x in a['items']};right={key(x):x for x in b['items']}
+        return {'left_id':left_id,'right_id':right_id,'same_package':a['package_id']==b['package_id'],
+                'method':'exact_content_and_provenance','unchanged':[left[k] for k in left if k in right],
+                'removed':[left[k] for k in left if k not in right],
+                'added':[right[k] for k in right if k not in left],
+                'user_decisions':{'left':a['reviews'],'right':b['reviews']},
+                'warning':'Точное сравнение текста и ссылок независимо от позиции, не смысловой анализ и не проверка истинности.'}
 
     def create_learning_task(self, claim_id):
         claim=self.get_claim(claim_id)

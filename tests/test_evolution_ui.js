@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const source=fs.readFileSync(require('node:path').join(__dirname,'../xagon/alpha_static/app.js'),'utf8');
+const fn=source.slice(source.indexOf('function evolutionTemplate('),source.indexOf('async function openFusionPackage'));
+const context=vm.createContext({});vm.runInContext(fn,context);
+const make=p=>JSON.parse(vm.runInContext('JSON.stringify(evolutionTemplate('+JSON.stringify(p)+'))',context));
+const p={id:'pkg_synthetic',citations:[{citation_id:'cite_1'}],source_claims:[{id:'claim_1',evidence:[{id:'ev_valid',validity:'valid'},{id:'ev_missing',validity:'missing'}]}]};
+const result=make(p);
+assert.equal(result.package_id,p.id);assert.equal(result.parent_synthesis_id,null);
+assert.deepEqual(result.items[0].claim_ids,['claim_1']);assert.deepEqual(result.items[0].evidence_ids,['ev_valid']);
+assert.deepEqual(result.items[0].citation_ids,['cite_1']);assert.equal(result.items[0].kind,'hypothesis');
+assert.deepEqual(make({id:'empty'}).items[0].evidence_ids,[]);
+assert.equal(p.source_claims[0].evidence.length,2);
+console.log('8 Evolution UI template assertions passed');
