@@ -1,0 +1,274 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "5d0be6dd9dd04c5a5e0e2711012610182483ac95fb68adaa04e76aefc00579b4",
+      "bytes": 87
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "2cc2414fb1dabd0cd7e32b50082e1ca3d64f40b6e08cb3b1941b6c087aaae629",
+      "bytes": 347
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "8dd27d559d5a49550a3fbc12a17e993407a299da51a5ddcc8d2db764a4e34f27",
+      "bytes": 1270
+    },
+    {
+      "path": "CLOUD_READY_REPORT.md",
+      "sha256": "33d746cedaa68e263d81b074224386c7031944b9b828379ea167acf31d3ee4b2",
+      "bytes": 7004
+    },
+    {
+      "path": "GITHUB_SETUP_GUIDE.md",
+      "sha256": "88b028cf2632016a0a6f356ecf3e879cdb4db82bd3393f3527392d229a130880",
+      "bytes": 7136
+    },
+    {
+      "path": "GIT_INCLUDE_FILES.json",
+      "sha256": "9e37fd9c612c78dac4edd9461ae0b223cfc0df5c4a34fd72df451a7f8b195254",
+      "bytes": 1655
+    },
+    {
+      "path": "LINUX_COMPATIBILITY_REPORT.md",
+      "sha256": "122aae72e75b0075533ed9fcbb16499eb1f35a6500228a1ca44fd1a51d3d8184",
+      "bytes": 4051
+    },
+    {
+      "path": "MULTI_PROJECT_WORKFLOW.md",
+      "sha256": "a9bd470e55dc8676d78d4f2ac337cce7393b9a47bd0f3b87d9d3f0aa95e2eed4",
+      "bytes": 4706
+    },
+    {
+      "path": "PRIVATE_REPOSITORY_PREPARATION.md",
+      "sha256": "9c48bb1daaa76c8400e92c0c081ced84e007c778eb3eb8baeae4736e1e2ae1fe",
+      "bytes": 1496
+    },
+    {
+      "path": "README.md",
+      "sha256": "039cb3f98b88ee986958d9c2cd1d23c0b5473828c1fb680f9c68909d23240d50",
+      "bytes": 1709
+    },
+    {
+      "path": "examples/first_lesson.md",
+      "sha256": "2dbb7c3e43daec250f4a54ce354830d91a17463f77aa5111c5d21e5ef9dca9e3",
+      "bytes": 203
+    },
+    {
+      "path": "examples/mock_response_template.json",
+      "sha256": "9e1cb4294cd2454332236f71dd671ed701af362db861a51142a2cb9a2d48b17c",
+      "bytes": 245
+    },
+    {
+      "path": "requirements-optional.txt",
+      "sha256": "254fa37b9e71c9eccb0657318665c8aacdfbe9eb26dfc58e0575b0b65daf2649",
+      "bytes": 91
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "3539d63216d8fc5816a18ba91ff913f0a3593ddb66042957a0c5a048041f116c",
+      "bytes": 114
+    },
+    {
+      "path": "scripts/acceptance_rc3.py",
+      "sha256": "a09fa31548cfeacb5ed8beeb4feb9e5e7901db061f4d856a414f33508f5498e4",
+      "bytes": 9358
+    },
+    {
+      "path": "scripts/audit_source.py",
+      "sha256": "250ca0e69e9685ebb266d0586630cd0baabf2aad7e62b81bc8537d1058c00d4d",
+      "bytes": 4832
+    },
+    {
+      "path": "scripts/check_runtime.py",
+      "sha256": "8d9f4c36a7b86d6bee62bbe972ae1ca344ce18e3604c5a5909824efb4e9c7791",
+      "bytes": 1233
+    },
+    {
+      "path": "scripts/cloud_checks.py",
+      "sha256": "b06c26e28bc0320741c69befde9527518239ebe04a51560a44184aad8f3c9531",
+      "bytes": 3226
+    },
+    {
+      "path": "scripts/start_demo.py",
+      "sha256": "55e37a7f5501464bb3b7ac3b5cbd94cd2d63e93bc5ac3e235c61a67e7d4dbb19",
+      "bytes": 1268
+    },
+    {
+      "path": "scripts/test_offline.sh",
+      "sha256": "9bdae065791eb10f1f28536fb4ea05d3f25249db96000f5b5774715a99624343",
+      "bytes": 126
+    },
+    {
+      "path": "tests/__init__.py",
+      "sha256": "b99ccafcdcaaba3d02b9674b27dc72725a14e9c34e6a51e22c8b6f711ef8be5f",
+      "bytes": 39
+    },
+    {
+      "path": "tests/rc3_fixtures.py",
+      "sha256": "282a2b4f4a99dfa15c8ec6e06837ba04ffdf0013c97722047d8e940c53e67645",
+      "bytes": 1675
+    },
+    {
+      "path": "tests/test_alpha_ui_dom.js",
+      "sha256": "a79a5b2790d090eeddd0df6aa6e20aeefbdb6eb71043193044e7d12a83f3c8e2",
+      "bytes": 2246
+    },
+    {
+      "path": "tests/test_beta_drafts.js",
+      "sha256": "29b23b2ba6a4c9668a2573eaca91f266ef338075e9f925bd0b24314a6bb37bf6",
+      "bytes": 2617
+    },
+    {
+      "path": "tests/test_infrastructure.py",
+      "sha256": "c9b4996901bc550bb9f6f831641163f507cf1fe513ef819e7f13275723628568",
+      "bytes": 2874
+    },
+    {
+      "path": "tests/test_intelligence_chat.py",
+      "sha256": "5560497a36dd52343a0125486bda1628768c86e195b39fa395bd3b908097bdcc",
+      "bytes": 3294
+    },
+    {
+      "path": "tests/test_rc3.py",
+      "sha256": "721974f9aa517e9ec3946c46fc9dbe82c4fac0bbd45794cc4d1696b05596a656",
+      "bytes": 6347
+    },
+    {
+      "path": "xagon/__init__.py",
+      "sha256": "25af87dc47e333318d8326279cef003630e0e5f26e6a18729fa54be21c921717",
+      "bytes": 105
+    },
+    {
+      "path": "xagon/alpha.py",
+      "sha256": "ba8076f5c183ce1edd04ee14f4e714c7d0514e9a3d9141f41333650a6d0c4c62",
+      "bytes": 27434
+    },
+    {
+      "path": "xagon/alpha_static/app.js",
+      "sha256": "8d1c2499a39d92afb58873a9230b5219b1e78963a595c982e3e6c977f9c37eae",
+      "bytes": 43917
+    },
+    {
+      "path": "xagon/alpha_static/index.html",
+      "sha256": "5733f87cbfd9f46a8bbd3807e70f5e1fe337c03143d3ca98f9d548bc30eef617",
+      "bytes": 20760
+    },
+    {
+      "path": "xagon/alpha_static/intelligence.js",
+      "sha256": "3d37f7cf825a0c1be5f04470e8b00c1c54495a257627c5d0dc904659fdb7019b",
+      "bytes": 9615
+    },
+    {
+      "path": "xagon/alpha_static/rc.js",
+      "sha256": "55f4bfd8457dbea3a01cf6d8a45fd7a442a96dc0b2693ac49252e96c9846a05c",
+      "bytes": 7887
+    },
+    {
+      "path": "xagon/alpha_static/style.css",
+      "sha256": "369ed8a059e2aa8890bb562bc35935becde6fa19da08c39fa6a7b414ed2f022b",
+      "bytes": 11337
+    },
+    {
+      "path": "xagon/beta_chat.py",
+      "sha256": "1ca551ec41fa4f6f4c62eadcc478f50fb7ccab7b352c8e22d4cf12c32f171b3e",
+      "bytes": 8155
+    },
+    {
+      "path": "xagon/beta_store.py",
+      "sha256": "15d6efd2123bebb634e6102758a6dd38121af213f0075534fbdecd17e1001c3a",
+      "bytes": 11370
+    },
+    {
+      "path": "xagon/cloud_policy.py",
+      "sha256": "3e7b9f1a48af2878759c432c803812d1a001d0dcd76536a610164258bed4d8e2",
+      "bytes": 709
+    },
+    {
+      "path": "xagon/document_import.py",
+      "sha256": "60ecf33e307fa05aae49b39fdf59016b24b47f5b10ee1dd3e3972a103e93c684",
+      "bytes": 5535
+    },
+    {
+      "path": "xagon/fusion_store.py",
+      "sha256": "49798f2b139b409025330f85fbc00985da291efbe6514cd81a4950c4cd9e5bf4",
+      "bytes": 17653
+    },
+    {
+      "path": "xagon/intelligence_chat.py",
+      "sha256": "5eaa75830ff4fea2e5b0bd210a1bff145392e52c7168052f634f3c054ad2c598",
+      "bytes": 7349
+    },
+    {
+      "path": "xagon/intelligence_store.py",
+      "sha256": "252489daed3be53efa349c5e852c0f7af9756e326e3ed114e8d552d68d5c8d06",
+      "bytes": 11444
+    },
+    {
+      "path": "xagon/knowledge_store.py",
+      "sha256": "407eda5d968562dc3a5b93e98ea9f1222b1e24cf0e33718e5ab724133c6dd735",
+      "bytes": 20689
+    },
+    {
+      "path": "xagon/learning.py",
+      "sha256": "d6ec0195b14f09d8dda04d9a081e7b53937ca097c6b86da5c0de910b04a3fa7c",
+      "bytes": 22698
+    },
+    {
+      "path": "xagon/manual_exchange.py",
+      "sha256": "b2b2df7add7d0c2db1ac2e9f9822f07a40a090eccbb2c55296ea94533a409915",
+      "bytes": 1849
+    },
+    {
+      "path": "xagon/product_store.py",
+      "sha256": "79ba83d0af426c02de8fc15d1f42dab1078efde832ab309f1b51de460a5da0e5",
+      "bytes": 6797
+    },
+    {
+      "path": "xagon/provider_contract.py",
+      "sha256": "838cb136907ed4f03def33b778c6707f8f4b5b190eb788ba9bf7920c12a5f47c",
+      "bytes": 5603
+    },
+    {
+      "path": "xagon/provider_service.py",
+      "sha256": "5eeb09886b65dbfe065b2326cd7d7832ca082f22376e95ecf75adb0dcbf8cb0c",
+      "bytes": 1782
+    },
+    {
+      "path": "xagon/rc_backup.py",
+      "sha256": "f8d207fb459e17f7ecff9a882b6ce8e14c94b121ec8c735135db2c05d748cc46",
+      "bytes": 8284
+    },
+    {
+      "path": "xagon/rc_diagnostics.py",
+      "sha256": "bf3e9c5fa67405a1818f82743a305647b90aee682c38a2517eae15195a75c4e5",
+      "bytes": 4395
+    },
+    {
+      "path": "xagon/rc_readiness.py",
+      "sha256": "0000550e6e17e95159f9976eb1afae9497460546aa06404d8bc94bca85a884dd",
+      "bytes": 2581
+    },
+    {
+      "path": "xagon/rc_store.py",
+      "sha256": "f9461b1eafb1541005f5cb1f67d14a65fc18d369338480b6d4e489766184fa4e",
+      "bytes": 6179
+    },
+    {
+      "path": "xagon/rc_tools.py",
+      "sha256": "16e50bc3cb12fa8459ae02b242617c9016c14507344f426537f23274a6c6c204",
+      "bytes": 3263
+    },
+    {
+      "path": "xagon/saved_xagon.py",
+      "sha256": "a6ee2ced03c0cc308d557c67de02743d00c1ab81f859be050efa3891b24a4348",
+      "bytes": 4454
+    }
+  ],
+  "original_release_files": 45,
+  "personal_data_included": false,
+  "linux_tested": false,
+  "publication_authorized": false,
+  "inventory_scope": "exact GIT_INCLUDE_FILES allowlist; excludes Git metadata and runtime artifacts"
+}

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="exacortex-token" content="__SESSION_TOKEN__">
+  <title>ExaCortex 1.0 RC3</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script><script src="/intelligence.js" defer></script><script src="/rc.js" defer></script>
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/" aria-label="ExaCortex, главная"><span class="brand-icon">E</span><span>ExaCortex<small>1.0 RC3 · RELEASE CANDIDATE</small></span></a>
+  <div class="sidebar-head"><h2>Моя библиотека</h2><span id="material-count" class="count">0</span></div>
+  <button id="import-button" class="button primary full">＋ Добавить материал</button>
+  <input id="file-input" type="file" accept=".txt,.md,.json,.docx,.pdf" hidden>
+  <button id="existing-button" class="button subtle full">Открыть сохранённый вебинар</button>
+  <p class="small muted import-help">TXT · Markdown · DOCX · PDF · JSON XAGON<br>Файлы остаются на компьютере. PDF: только текст, без OCR; требуется доступный локальный адаптер.</p>
+  <label class="sr-only" for="library-filter">Фильтр библиотеки</label><input id="library-filter" type="search" placeholder="Найти материал в библиотеке" maxlength="200">
+  <label class="sr-only" for="tag-filter">Фильтр по тегу</label><input id="tag-filter" type="search" placeholder="Фильтр по тегу" maxlength="80"><nav id="materials" aria-label="Учебные материалы"></nav>
+  <footer><span class="status-dot"></span> Локальный режим <span class="badge">$0 API</span><p>Без облачной модели и отправки данных.</p></footer>
+</aside>
+<main><aside id="rc-readiness" class="context-note" role="status">Сохранённые результаты XAGON: проверяем состояние…</aside><nav class="workspace-nav" aria-label="Разделы Workspace"><button class="button subtle" data-workspace="home">Главная</button><button class="button subtle" data-workspace="library">Библиотека</button><button class="button subtle" data-workspace="intelligence">Chat · поиск / mock</button><button class="button subtle" data-workspace="knowledge">Мои знания</button><button class="button subtle" data-workspace="fusion">Knowledge Fusion</button><button class="button subtle" data-workspace="learning">Обучение</button><button class="button subtle" data-workspace="practice">Практика</button><button class="button subtle" data-workspace="projects">Проекты</button><button class="button subtle" data-workspace="refresh">Актуальность</button><button class="button subtle" data-workspace="settings">Настройки</button></nav>
+  <header class="topbar"><span>Ваше пространство знаний</span><span class="top-label">Читать · находить · практиковаться</span></header>
+  <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+  <section id="welcome" class="welcome">
+    <span class="eyebrow">ОТ МАТЕРИАЛА К ПОНИМАНИЮ</span>
+    <h1>Учитесь на своих<br>источниках.</h1>
+    <p>Соберите материалы, найдите нужный фрагмент и превратите чтение в практику. Каждый ответ ведёт к источнику.</p>
+    <div class="welcome-actions"><button id="welcome-saved-bundle" class="button primary">Подключить сохранённый XAGON: текст и Vision</button><button id="welcome-open" class="button primary">Начать с сохранённого вебинара</button><button id="welcome-import" class="button">Импортировать TXT / Markdown</button></div><p class="small muted">Начните с темы → прочитайте цитаты → откройте конспект → выполните упражнение → сохраните Markdown.</p>
+    <div class="welcome-grid"><article><span>01</span><h3>Откройте материал</h3><p>Начните с сохранённого вебинара или загрузите текст.</p></article><article><span>02</span><h3>Задайте вопрос</h3><p>Chat Lite найдёт цитаты. Он не сочиняет ответы.</p></article><article><span>03</span><h3>Закрепите знания</h3><p>Используйте конспект и шаблоны практических заданий.</p></article></div>
+  </section>
+  <section id="workspace" hidden>
+    <div class="material-heading"><div><span class="eyebrow">УЧЕБНЫЙ МАТЕРИАЛ</span><h1 id="material-title"></h1><p id="material-meta" class="muted"></p></div><button id="export-button" class="button">↓ Экспорт Markdown</button></div>
+    <div class="progress-bar"><label for="progress-state">Мой прогресс</label><select id="progress-state"><option value="new">Не начато</option><option value="reading">Изучаю</option><option value="completed">Завершено мной</option></select><button id="progress-save" class="button">Сохранить прогресс</button><span class="small muted">Самооценка, не проверка знаний.</span></div><div class="tabs" role="tablist" aria-label="Разделы материала"><button role="tab" aria-selected="true" data-tab="read">Текст и таймкоды</button><button role="tab" aria-selected="false" data-tab="ask">Chat Lite</button><button role="tab" aria-selected="false" data-tab="notes">Конспект</button><button role="tab" aria-selected="false" data-tab="practice">Практика</button><button role="tab" aria-selected="false" data-tab="journal">Мои заметки</button><button role="tab" aria-selected="false" data-tab="knowledge">Мои знания</button><button role="tab" aria-selected="false" data-tab="fusion">Knowledge Fusion</button></div>
+    <section id="panel-read" role="tabpanel">
+      <button id="return-context" class="button" hidden>← Вернуться к конспекту или вопросу</button>
+      <form id="search-form" class="searchbar"><label class="sr-only" for="search-input">Поиск в материале</label><input id="search-input" type="search" maxlength="500" placeholder="Найти понятие, инструмент или фразу…"><button class="button primary" type="submit">Найти</button><button id="clear-search" class="button subtle" type="button" hidden>Весь текст</button></form>
+      <p class="context-note">Таймкоды машинные и приблизительные. Кнопка времени открывает фрагмент транскрипта; видеоплеер не подключён.</p>
+      <p id="search-summary" class="small muted" role="status"></p><div id="search-results" hidden></div><div id="transcript"></div>
+    </section>
+    <section id="panel-ask" role="tabpanel" hidden>
+      <div class="section-intro"><h2>Спросите у материала</h2><p>Chat Lite — локальный поиск релевантных цитат. Это не ответ генеративной модели: выводы проверяйте по источникам.</p></div>
+      <form id="ask-form" class="question-form"><label for="question">Что вы хотите найти?</label><textarea id="question" rows="3" maxlength="1000" placeholder="Например: что говорится об экономии контекста?"></textarea><button class="button primary" type="submit">Найти в источнике →</button></form>
+      <div id="answer" aria-live="polite"></div><h3>История вопросов</h3><p class="small muted">Сохранённые вопросы и извлечённые цитаты — не подтверждённые знания. Внешняя модель отключена.</p><div id="chat-history"></div>
+    </section>
+    <section id="panel-notes" role="tabpanel" hidden><div class="section-intro"><h2>Конспект по источнику</h2><p>Автоматическая подборка фрагментов, без новых утверждений. Проверьте и дополните своими выводами после экспорта.</p></div><div class="note-tools"><button id="notes-expand" class="button subtle">Развернуть всё</button><button id="notes-collapse" class="button subtle">Свернуть всё</button></div><div id="notes-content" class="markdown"></div></section>
+    <section id="panel-practice" role="tabpanel" hidden><div class="section-intro"><h2>От чтения к практике</h2><p>Учебные шаблоны для самостоятельной работы. Это не извлечённые из видео инструкции и не проверенные команды.</p></div><h3>Мой маршрут</h3><p class="small muted">Отмечайте выполненные шаги. Результат сохраняется локально.</p><div id="study-plan"></div><h3>Задачи из моих знаний</h3><div id="learning-task-summary">Откройте Обучение в верхнем меню, чтобы загрузить задачи.</div><div id="practice-content" class="markdown"></div></section>
+    <section id="panel-journal" role="tabpanel" hidden>
+      <div class="section-intro"><h2>Мои заметки и закладки</h2><p>Ваши записи хранятся отдельно от исходного текста и включаются в Markdown-экспорт.</p></div>
+      <form id="tags-form" class="searchbar"><label for="tags-input">Теги через запятую</label><input id="tags-input" maxlength="500" placeholder="ИИ, аналитика"><button class="button" type="submit">Сохранить теги</button></form>
+      <form id="note-form" class="question-form"><label for="note-chunk">Привязать к источнику</label><select id="note-chunk"><option value="">Материал целиком</option></select><label for="note-text">Заметка или ответ на упражнение</label><p class="small muted">Черновик не сохранён до нажатия кнопки. При смене материала он остаётся в этой вкладке; закрытие или перезагрузка может его потерять.</p><textarea id="note-text" rows="5" maxlength="20000" required placeholder="Мой вывод, точная цитата и вопрос для проверки…"></textarea><button class="button primary" type="submit">Сохранить заметку</button></form>
+      <h3>Сохранённые заметки</h3><div id="personal-notes"></div><h3>Закладки источников</h3><div id="bookmarks"></div>
+    </section>
+
+    <section id="panel-knowledge" role="tabpanel" hidden>
+      <h2>Мои знания</h2><p>Утверждения сохраняют исходную формулировку и историю. Подтверждение пользователем не является независимой проверкой фактов.</p>
+      <form id="knowledge-search" class="searchbar"><input id="knowledge-query" placeholder="Поиск утверждений" aria-label="Поиск утверждений"><select id="knowledge-status" aria-label="Статус утверждений"><option value="">Все статусы</option><option value="unreviewed">Не проверено</option><option value="user_confirmed">Подтверждено пользователем</option><option value="corrected">Исправлено</option><option value="rejected">Отклонено</option><option value="needs_check">Нужна проверка</option></select><button class="button" type="submit">Найти знания</button></form>
+      <button id="knowledge-extract" class="button">Извлечь фрагменты как утверждения</button><button id="knowledge-export" class="button">Экспорт знаний Markdown</button>
+      <form id="claim-create" class="question-form"><label for="claim-text">Новое утверждение</label><textarea id="claim-text" required maxlength="20000"></textarea><label for="claim-chunk">Исходный фрагмент</label><select id="claim-chunk"></select><button type="submit" class="button primary">Создать утверждение</button></form>
+      <div id="knowledge-list"></div><article id="knowledge-card" class="knowledge-card"></article>
+    </section>
+  </section>
+<section id="panel-fusion" role="tabpanel" hidden>
+<div class="section-intro"><h2>Knowledge Fusion</h2><p>Сопоставьте источники и подготовьте пакет для ручной работы с ChatGPT. Приложение не отправляет материалы в сеть.</p></div>
+<div class="fusion-layers"><p><b>A · Source Claims</b> — исходные цитаты и Evidence.</p><p><b>B · External Verification</b> — вручную зарегистрированные проверки, с источником и ограничениями.</p><p><b>C · AI Synthesis</b> — импортированные выводы и гипотезы, отдельно от оригиналов.</p><p><b>D · User Decisions</b> — решения пользователя и история редакций.</p></div>
+<form id="fusion-create" class="question-form"><label for="fusion-topic">Тема</label><input id="fusion-topic" maxlength="300" required><label for="fusion-task">Задача для сравнения</label><textarea id="fusion-task" maxlength="4000" required></textarea><fieldset><legend>Выберите исходные материалы</legend><div id="fusion-sources"></div></fieldset><button class="button primary" type="submit">Подготовить пакет и промпт</button></form>
+<h3>Сохранённые пакеты</h3><div id="fusion-packages"></div><article id="fusion-package"></article>
+<h3>История синтезов</h3><div id="fusion-syntheses"></div><article id="fusion-synthesis"></article>
+</section>
+<section id="panel-intelligence" role="tabpanel" hidden>
+<h2>Поиск цитат и тестовый Chat</h2><p>Offline извлекает цитаты; mock — тестовая модель. Облачные API технически заблокированы.</p>
+<form id="int-search" class="question-form"><label for="int-query">Тема или вопрос</label><textarea id="int-query" maxlength="2000" required></textarea><fieldset><legend>Источники (без выбора — вся библиотека, до10)</legend><div id="int-sources"></div></fieldset><label for="int-model">Модель</label><select id="int-model"><option value="offline">Offline — цитаты</option><option value="mock">Mock — тест, не настоящий AI</option><option value="cloud" disabled>Cloud — заблокировано $0</option></select><button class="button primary" type="submit">Найти и ответить</button><button id="int-context" class="button" type="button">Создать пакет для ручного AI</button></form>
+<div id="int-answer"></div><h3>История Intelligence Chat</h3><div id="int-history"></div>
+<h3>Задачи из подтверждённых пользователем знаний</h3><p>Подтверждение пользователя не является независимой проверкой. Создайте задачу из карточки знаний или принятого Fusion-вывода.</p><div id="int-tasks"></div>
+<h3>Повторная обработка пакетов и сравнение синтезов</h3><label for="int-package">Сохранённый пакет</label><select id="int-package"></select><button id="int-reprocess" class="button">Повторить локальную подготовку</button><div id="int-runs"></div><label for="int-left">Первый синтез</label><select id="int-left"></select><label for="int-right">Второй синтез</label><select id="int-right"></select><button id="int-compare" class="button">Сравнить версии результатов</button><div id="int-comparison"></div>
+</section>
+<section id="panel-refresh" role="tabpanel" hidden><h2>Актуальность знаний</h2><p>Только сравнение локальных документов. Изменение текста означает возможное устаревание, а не опровержение. Интернет не проверяется.</p>
+<form id="revision-form" class="question-form"><label for="revision-old">Старая версия материала</label><select id="revision-old" required></select><label for="revision-title">Название новой версии</label><input id="revision-title" required maxlength="300"><label for="revision-text">Новый текст UTF-8 / Markdown</label><textarea id="revision-text" maxlength="1000000" required rows="7"></textarea><button type="submit" class="button primary">Импортировать новую версию и сравнить</button></form>
+<p>DOCX/PDF: импортируйте новой записью в библиотеку, затем выберите две версии ниже.</p><label for="refresh-old">Старая запись</label><select id="refresh-old"></select><label for="refresh-new">Новая запись</label><select id="refresh-new"></select><button id="refresh-compare" class="button">Сравнить два документа</button>
+<form id="refresh-check" class="question-form"><label for="refresh-claim">ID утверждения для ручной отметки</label><input id="refresh-claim" required><label for="refresh-note">Что проверено и какие ограничения?</label><textarea id="refresh-note" required maxlength="20000"></textarea><button class="button" type="submit">Зафиксировать личную проверку с датой</button></form><div id="refresh-results"></div>
+<h3>Материал из практического проекта</h3><form id="project-form" class="question-form"><label for="project-title">Название проекта/результата</label><input id="project-title" required maxlength="300"><label for="project-text">Практический опыт и ограничения</label><textarea id="project-text" required maxlength="1000000"></textarea><button type="submit" class="button">Сохранить проектный материал</button></form></section>
+<section id="panel-settings" role="tabpanel" hidden><h2>Настройки и ограничения</h2><p>Данные по умолчанию: rc_data рядом с приложением. Бюджет дополнительных API:$0; облачные провайдеры выключены. Семантическая модель не загружается. Изменять оригиналы предыдущих релизов запрещено.</p><p>Для ручного AI используйте Fusion: сначала прочитайте пакет и проверьте конфиденциальность. Приложение ничего не отправляет в ChatGPT.</p><div id="settings-status"></div><h3>Состояние системы RC3</h3><div id="rc-system-status"></div><button id="rc-import-saved" class="button">Подключить сохранённые транскрипции и Vision</button><div id="rc-saved-result"></div><button id="rc-diagnose" class="button">Самодиагностика</button><button id="rc-backup" class="button">Создать проверенную резервную копию</button><div id="rc-diagnostic-result"></div><p id="rc-backup-result"></p><p>Копия содержит ваши тексты и кадры. Restore: python -m xagon.rc_tools restore --backup ПАПКА --destination НОВАЯ_ПАПКА. Существующая библиотека не перезаписывается.</p></section>
+</main>
+</body></html>

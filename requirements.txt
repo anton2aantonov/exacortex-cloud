@@ -1,0 +1,2 @@
+# Core and portable tests use Python 3.11+ standard library only.
+# No cloud SDK or model dependency is required.

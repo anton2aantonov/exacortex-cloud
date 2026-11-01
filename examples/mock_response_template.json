@@ -1,0 +1,13 @@
+{
+  "origin": "mock",
+  "model": "synthetic fixture, no actual AI",
+  "items": [
+    {
+      "text": "Replace with a fixture statement",
+      "kind": "hypothesis",
+      "citation_ids": [
+        "cite_ID_FROM_YOUR_PACKAGE"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+# Optional text PDF adapter; version verified in the existing local runtime.
+pypdf==6.10.0
