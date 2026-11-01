@@ -12,10 +12,15 @@ candidates for analysis; neither lexical agreement nor valid references establis
 truth. Original source records remain append-only. No live LLM transport, new
 services, dependencies or paid operations are introduced.
 
-Validation: 29 unit tests, 42 HTTP assertions, 3 JavaScript syntax checks and
-36 JavaScript assertions passed. Source audit passed; AI calls: 0. See
+Validation: 35 unit tests, 45 HTTP assertions, 3 JavaScript syntax checks and
+37 JavaScript assertions passed. Source audit passed; AI calls: 0. See
 KNOWLEDGE_EVOLUTION_SPRINT1.md for limits. All new scenarios use synthetic data/mock
 origins and temporary databases.
 
-Review as a draft; do not merge automatically. This file is the local PR draft;
-no remote publication is performed by this source-only change.
+PR #1 is published as a draft for review; do not merge automatically.
+
+Final review fixes reject citation/claim provenance mismatches while retaining
+citation-only imports and flagging immutable legacy records. Comparison now
+matches every duplicate occurrence one-to-one; item IDs and match pairs survive.
+Six new Python regressions, three HTTP assertions and one JS assertion cover the
+fixes. See KNOWLEDGE_EVOLUTION_SPRINT1.md for reference semantics and limits.

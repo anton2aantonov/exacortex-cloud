@@ -1,6 +1,7 @@
 """Local retrieval, refresh comparisons and personal learning-task lineage."""
 from __future__ import annotations
 import json
+from collections import defaultdict, deque
 from pathlib import Path
 import sqlite3
 from .fusion_store import FusionStore, fingerprint, canonical
@@ -78,11 +79,21 @@ class IntelligenceStore(FusionStore):
         a=self.get_synthesis(left_id);b=self.get_synthesis(right_id)
         def key(item):
             return fingerprint({k:item.get(k,[]) for k in ('text','kind','citation_ids','claim_ids','evidence_ids')})
-        left={key(x):x for x in a['items']};right={key(x):x for x in b['items']}
+        right=defaultdict(deque)
+        for item in b['items']:right[key(item)].append(item)
+        unchanged=[];removed=[];matched_ids=set();matches=[]
+        for item in a['items']:
+            bucket=right[key(item)]
+            if bucket:
+                match=bucket.popleft();matched_ids.add(match['id'])
+                unchanged.append(item)
+                matches.append({'left_item_id':item['id'],'right_item_id':match['id']})
+            else:removed.append(item)
+        added=[item for item in b['items'] if item['id'] not in matched_ids]
         return {'left_id':left_id,'right_id':right_id,'same_package':a['package_id']==b['package_id'],
-                'method':'exact_content_and_provenance','unchanged':[left[k] for k in left if k in right],
-                'removed':[left[k] for k in left if k not in right],
-                'added':[right[k] for k in right if k not in left],
+                'method':'exact_content_and_provenance','unchanged':unchanged,'matches':matches,
+                'removed':removed,
+                'added':added,
                 'user_decisions':{'left':a['reviews'],'right':b['reviews']},
                 'warning':'Точное сравнение текста и ссылок независимо от позиции, не смысловой анализ и не проверка истинности.'}
 

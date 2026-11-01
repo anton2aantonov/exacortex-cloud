@@ -64,3 +64,31 @@ sandbox allowance for local socket creation and bound only to 127.0.0.1; test
 network guards blocked external connections. No dependencies were installed.
 `git diff --check`: PASS. No main merge, runtime/user-data changes or remote
 publication. A local PR draft is in PULL_REQUEST_DRAFT.md.
+
+## PR #1 final review fixes
+
+Both reported defects reproduced with failing regressions before fixes.
+
+1. When claim_ids are present, every citation must identify the original chunk of
+   a declared claim or its valid transcript Evidence (material, source version and
+   chunk must match). Multiple declared claims support multi-source analysis;
+   Evidence attached from another material is also allowed. Citation-only legacy
+   imports remain valid. Inconsistent combinations are rejected atomically.
+   Existing immutable records remain readable and expose provenance_status and
+   unlinked_citation_ids, also displayed in the UI; history is not rewritten.
+   The UI template now selects only citations consistent with its selected claim.
+2. Version comparison matches occurrences one-to-one using per-content queues.
+   added/removed/unchanged retain duplicate conclusions and their item IDs; matches
+   exposes the paired left/right IDs. Content comparison remains independent of
+   item order. This is exact comparison, not semantic validation.
+
+Regressions cover mismatch rejection, citation-only imports, multiple claims,
+Evidence from another material, legacy record warnings, duplicates added/removed,
+identical duplicate versions and reordering mixed with duplicates. Synthetic HTTP
+checks cover mismatch rejection and duplicate counts. Existing schema and the
+Fusion/manual ChatGPT workflow are retained.
+
+Final review validation: `python3 -B scripts/cloud_checks.py` PASS: 35 Python tests,
+25 existing + 20 Evolution HTTP assertions, 3 JS syntax checks and 37 JS assertions.
+Source audit and diff whitespace checks PASS. No live APIs, new dependencies,
+production/RC3 data access or main merge. All fixtures are synthetic/temporary.

@@ -97,6 +97,7 @@ class FusionStore(KnowledgeStore):
         payload['boundaries'] = ['Source Claims', 'External Verification', 'AI Synthesis', 'User Decisions']
         payload['response_schema']['items'][0].update(claim_ids=[], evidence_ids=[])
         payload['response_schema']['parent_synthesis_id'] = None
+        payload['reference_semantics'] = 'При наличии claim_ids каждая citation_id должна ссылаться на исходный фрагмент одного из claims либо его валидное текстовое Evidence. Для межисточникового анализа перечислите все соответствующие claims. Импорт только с citation_ids остаётся допустимым.'
         payload['prompt'] += '\nУказывайте claim_ids и evidence_ids из пакета. Проверка ссылок не устанавливает истинность. Source Claims, External Verification, AI Synthesis и User Decisions сохраняйте раздельно.'
         key='pkg_'+fingerprint(payload)[:28];payload.update(id=key,created_at=_now())
         with self._connect() as con:
@@ -150,6 +151,22 @@ class FusionStore(KnowledgeStore):
     def export_package(self, package_id):
         return json.dumps(self.get_package(package_id),ensure_ascii=False,indent=2)
 
+    @staticmethod
+    def _unlinked_citations(package, claim_ids, refs):
+        # A citation links a claim's source chunk or any of its valid transcript
+        # Evidence, including Evidence attached from another material.
+        claims={c['id']:c for c in package.get('source_claims',[])}
+        locations=set()
+        for cid in claim_ids:
+            claim=claims[cid]
+            locations.add((claim['material_id'],claim['source_version'],claim['chunk_id']))
+            locations.update((e['material_id'],e['source_version'],e['chunk_id'])
+                             for e in claim['evidence']
+                             if e['validity']=='valid' and e.get('kind')=='transcript')
+        return [c['citation_id'] for c in package['citations']
+                if c['citation_id'] in refs and
+                (c['material_id'],c['source_version'],c['chunk_id']) not in locations]
+
     def import_synthesis(self, package_id, payload):
         package=self.get_package(package_id)
         if not isinstance(payload,dict): raise ValueError('Ожидается JSON-объект синтеза')
@@ -181,6 +198,8 @@ class FusionStore(KnowledgeStore):
             evidence={e['id'] for cid in claim_ids for e in claims[cid]['evidence'] if e['validity']=='valid'}
             if not isinstance(evidence_ids,list) or any(not isinstance(e,str) or e not in evidence for e in evidence_ids):
                 raise ValueError('Evidence не принадлежит указанным Source Claims')
+            if claim_ids and self._unlinked_citations(package,claim_ids,refs):
+                raise ValueError('Цитата не связана с указанными Source Claims; добавьте соответствующий claim или его Evidence')
             items.append({'claim_ids':list(dict.fromkeys(claim_ids)),'evidence_ids':list(dict.fromkeys(evidence_ids)),'id':f'item_{i+1}','original_text':text,'text':text,'kind':kind,'citation_ids':list(dict.fromkeys(refs)),'citation_status':'references_valid' if refs or evidence_ids else 'unsupported','verified_truth':False})
         data={'input_sha256':fingerprint(payload),'parent_synthesis_id':parent,'package_id':package_id,'model':model,'processed_at':processed,'origin':origin,'prompt_id':fingerprint(package['prompt']),'metadata_notice':'Модель и время обработки сообщены пользователем; приложением не проверены','items':items}
         if 'original_response' in payload:
@@ -200,6 +219,10 @@ class FusionStore(KnowledgeStore):
         allowed={c['citation_id'] for c in package['citations']}
         for item in result['items']:
             if any(ref not in allowed for ref in item['citation_ids']):raise ValueError('История синтеза содержит неизвестную цитату')
+            claim_ids=item.get('claim_ids',[])
+            unlinked=self._unlinked_citations(package,claim_ids,item['citation_ids']) if claim_ids else []
+            item['unlinked_citation_ids']=unlinked
+            item['provenance_status']='legacy_unlinked_citations' if unlinked else ('claim_links_consistent' if claim_ids else 'citations_only')
         result['reviews']=reviews
         for item in result['items']:
             history=[r for r in reviews if r['item_id']==item['id']]

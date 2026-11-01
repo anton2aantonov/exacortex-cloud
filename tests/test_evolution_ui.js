@@ -12,4 +12,6 @@ assert.deepEqual(result.items[0].claim_ids,['claim_1']);assert.deepEqual(result.
 assert.deepEqual(result.items[0].citation_ids,['cite_1']);assert.equal(result.items[0].kind,'hypothesis');
 assert.deepEqual(make({id:'empty'}).items[0].evidence_ids,[]);
 assert.equal(p.source_claims[0].evidence.length,2);
-console.log('8 Evolution UI template assertions passed');
+const foreign={...p,citations:[{citation_id:'cite_foreign',material_id:'other',source_version:'v2',chunk_id:99}]};
+assert.deepEqual(make(foreign).items[0].citation_ids,[]);
+console.log('9 Evolution UI template assertions passed');

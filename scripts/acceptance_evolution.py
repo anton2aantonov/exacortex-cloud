@@ -34,6 +34,13 @@ def main():
             payload['parent_synthesis_id']=a['id'];payload['items'][0]['text']='Revised synthetic hypothesis'
             code,b=req('/api/fusion-import',{'package_id':p['id'],'payload':payload});check(code==200 and b['parent_synthesis_id']==a['id'])
             code,diff=req('/api/synthesis-compare?left_id='+a['id']+'&right_id='+b['id']);check(code==200 and len(diff['added'])==1)
+            mismatch=json.loads(json.dumps(payload))
+            mismatch['items'][0]['citation_ids']=[next(c['citation_id'] for c in p['citations'] if c['material_id']==materials[1]['id'])]
+            check(req('/api/fusion-import',{'package_id':p['id'],'payload':mismatch})[0]==400)
+            duplicates=json.loads(json.dumps(payload));duplicates['items']*=2
+            code,dup=req('/api/fusion-import',{'package_id':p['id'],'payload':duplicates});check(code==200)
+            code,comparison=req('/api/synthesis-compare?left_id='+b['id']+'&right_id='+dup['id'])
+            check(code==200 and len(comparison['unchanged'])==1 and len(comparison['added'])==1)
             payload['items'][0]['evidence_ids']=[claims[1]['evidence'][0]['id']]
             check(req('/api/fusion-import',{'package_id':p['id'],'payload':payload})[0]==400)
             check(req('/api/fusion-review',{'synthesis_id':b['id'],'item_id':'item_1','action':'accept'})[0]==200)
@@ -41,7 +48,7 @@ def main():
             check(req('/api/learning-task-state',{'task_id':t['id'],'completed':True})[1]['status']=='completed')
         with running(db) as (req,server):
             check(req('/api/fusion-synthesis?id='+a['id'])[1]['items'][0]['text']=='Synthetic hypothesis')
-            check(len(req('/api/fusion-syntheses?package_id='+p['id'])[1])==2)
+            check(len(req('/api/fusion-syntheses?package_id='+p['id'])[1])==3)
             check(req('/api/learning-tasks')[1][0]['status']=='completed')
     print(json.dumps({'evolution_http_assertions':checks,'ai_calls':0,'synthetic_only':True}))
 if __name__=='__main__':main()

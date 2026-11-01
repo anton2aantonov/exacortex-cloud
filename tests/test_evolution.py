@@ -82,3 +82,62 @@ class EvolutionTests(unittest.TestCase):
         self.store.review_synthesis(syn['id'],'item_1','accept')
         self.assertEqual(self.store.get_claim(self.claims[0]['id'])['status'],'unreviewed')
         self.assertEqual(self.store.get_package(self.package['id']),self.package)
+
+    def test_citation_claim_mismatch_is_rejected_atomically(self):
+        payload=self.payload()
+        foreign=next(c for c in self.package['citations'] if c['material_id']==self.materials[1]['id'])
+        payload['items'][0]['citation_ids']=[foreign['citation_id']]
+        with self.assertRaises(ValueError):self.store.import_synthesis(self.package['id'],payload)
+        self.assertEqual(self.store.list_syntheses(),[])
+
+    def test_citation_only_legacy_and_multisource_claims(self):
+        payload=self.payload();payload['items'][0].pop('claim_ids');payload['items'][0].pop('evidence_ids')
+        self.assertEqual(self.store.import_synthesis(self.package['id'],payload)['items'][0]['citation_status'],'references_valid')
+        payload=self.payload()
+        payload['items'][0]['claim_ids'].append(self.claims[1]['id'])
+        payload['items'][0]['citation_ids'].append(next(c['citation_id'] for c in self.package['citations'] if c['material_id']==self.materials[1]['id']))
+        self.assertEqual(len(self.store.import_synthesis(self.package['id'],payload)['items'][0]['claim_ids']),2)
+
+    def test_duplicate_conclusions_keep_occurrence_counts(self):
+        one=self.payload();two=self.payload();two['items']*=2
+        a=self.store.import_synthesis(self.package['id'],one);b=self.store.import_synthesis(self.package['id'],two)
+        forward=self.store.compare_syntheses(a['id'],b['id'])
+        self.assertEqual(len(forward['unchanged']),1);self.assertEqual(len(forward['added']),1)
+        self.assertEqual(forward['added'][0]['id'],'item_2')
+        backward=self.store.compare_syntheses(b['id'],a['id'])
+        self.assertEqual(len(backward['removed']),1);self.assertEqual(backward['removed'][0]['id'],'item_2')
+        same=self.store.compare_syntheses(b['id'],b['id'])
+        self.assertEqual(len(same['unchanged']),2);self.assertEqual(same['added'],[])
+
+    def test_cross_material_evidence_is_a_valid_claim_link(self):
+        foreign=self.materials[1]
+        self.store.add_evidence(self.claims[0]['id'],foreign['id'],foreign['chunks'][0]['id'])
+        package=self.store.create_package('MCP',[m['id'] for m in self.materials],'Cross-source Evidence')
+        payload=self.payload();payload['package_id']=package['id']
+        payload['items'][0]['citation_ids']=[next(c['citation_id'] for c in package['citations'] if c['material_id']==foreign['id'])]
+        syn=self.store.import_synthesis(package['id'],payload)
+        self.assertEqual(syn['items'][0]['provenance_status'],'claim_links_consistent')
+
+    def test_legacy_mismatched_record_is_readable_and_flagged(self):
+        import json
+        payload=self.payload();syn=self.store.import_synthesis(self.package['id'],payload)
+        with self.store._connect() as con:
+            raw=json.loads(con.execute('SELECT payload FROM fusion_syntheses WHERE id=?',(syn['id'],)).fetchone()[0])
+            raw['id']='syn_legacy_fixture'
+            foreign=next(c['citation_id'] for c in self.package['citations'] if c['material_id']==self.materials[1]['id'])
+            raw['items'][0]['citation_ids']=[foreign]
+            con.execute('INSERT INTO fusion_syntheses VALUES(?,?,?,?)',(raw['id'],self.package['id'],json.dumps(raw),raw['created_at']))
+        result=self.store.get_synthesis(raw['id'])['items'][0]
+        self.assertEqual(result['provenance_status'],'legacy_unlinked_citations')
+        self.assertEqual(result['unlinked_citation_ids'],[foreign])
+
+    def test_duplicate_comparison_with_reordered_other_item(self):
+        payload=self.payload();x=payload['items'][0]
+        payload['items']=[dict(x),dict(x),dict(x,text='Other')]
+        a=self.store.import_synthesis(self.package['id'],payload)
+        payload['items']=[dict(x,text='Other'),dict(x),dict(x)]
+        b=self.store.import_synthesis(self.package['id'],payload)
+        result=self.store.compare_syntheses(a['id'],b['id'])
+        self.assertEqual(len(result['unchanged']),3)
+        self.assertEqual(len({m['right_item_id'] for m in result['matches']}),3)
+        self.assertEqual(result['added'],[]);self.assertEqual(result['removed'],[])

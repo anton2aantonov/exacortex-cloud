@@ -34,12 +34,12 @@ def main():
     if not result.wasSuccessful():return 1
     subprocess.run([sys.executable,'-B',str(ROOT/'scripts/acceptance_rc3.py')],cwd=ROOT,check=True,timeout=180)
     subprocess.run([sys.executable,'-B',str(ROOT/'scripts/acceptance_evolution.py')],cwd=ROOT,check=True,timeout=180)
-    report['evolution_http_assertions']=17
+    report['evolution_http_assertions']=20
     report['http_assertions']=25
     if node:
         for filename in ('app.js','intelligence.js','rc.js'):subprocess.run([node,'--check',str(ROOT/'xagon/alpha_static'/filename)],check=True,timeout=30)
         for filename in ('test_alpha_ui_dom.js','test_beta_drafts.js','test_evolution_ui.js'):subprocess.run([node,str(ROOT/'tests'/filename)],check=True,timeout=30)
-        report['javascript']='PASS: 3 syntax checks / 36 assertions'
+        report['javascript']='PASS: 3 syntax checks / 37 assertions'
     report['success']=True;out=ROOT/'test_artifacts';out.mkdir(exist_ok=True)
     (out/'cloud_checks.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     print(json.dumps(report));return 0
