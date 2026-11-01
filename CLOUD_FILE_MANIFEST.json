@@ -27,8 +27,13 @@
     },
     {
       "path": "GIT_INCLUDE_FILES.json",
-      "sha256": "9e37fd9c612c78dac4edd9461ae0b223cfc0df5c4a34fd72df451a7f8b195254",
-      "bytes": 1655
+      "sha256": "ebbfc04738dc16258cba4e7be3cbeb37a5e9dfa8a4da1b33da540ea007741bbf",
+      "bytes": 1826
+    },
+    {
+      "path": "KNOWLEDGE_EVOLUTION_SPRINT1.md",
+      "sha256": "43b0bfd2ea446529fc6da724cc633b2d09afe193a94aad96ae1c50fe8898f7d4",
+      "bytes": 5774
     },
     {
       "path": "LINUX_COMPATIBILITY_REPORT.md",
@@ -44,6 +49,11 @@
       "path": "PRIVATE_REPOSITORY_PREPARATION.md",
       "sha256": "9c48bb1daaa76c8400e92c0c081ced84e007c778eb3eb8baeae4736e1e2ae1fe",
       "bytes": 1496
+    },
+    {
+      "path": "PULL_REQUEST_DRAFT.md",
+      "sha256": "cb4bb0e3c52cd7aad11ef60f50167839af415552bdf9cb4e8792af38fe1767d3",
+      "bytes": 1542
     },
     {
       "path": "README.md",
@@ -71,6 +81,11 @@
       "bytes": 114
     },
     {
+      "path": "scripts/acceptance_evolution.py",
+      "sha256": "e5977f4fa66a37b1e9a9c95cb2a68c8ed217e86c2a4d320928b8d03bbce586bd",
+      "bytes": 3957
+    },
+    {
       "path": "scripts/acceptance_rc3.py",
       "sha256": "a09fa31548cfeacb5ed8beeb4feb9e5e7901db061f4d856a414f33508f5498e4",
       "bytes": 9358
@@ -87,8 +102,8 @@
     },
     {
       "path": "scripts/cloud_checks.py",
-      "sha256": "b06c26e28bc0320741c69befde9527518239ebe04a51560a44184aad8f3c9531",
-      "bytes": 3226
+      "sha256": "eba19d67a80231b1c6e4a75332f7af0f75295c189cbf98a80259f4d8b05a82c7",
+      "bytes": 3410
     },
     {
       "path": "scripts/start_demo.py",
@@ -121,6 +136,16 @@
       "bytes": 2617
     },
     {
+      "path": "tests/test_evolution.py",
+      "sha256": "5ae24c9e4cbd1a24c60e135cf7a7fd748d89d5c686cd1a70d839001fbdcdcc79",
+      "bytes": 10229
+    },
+    {
+      "path": "tests/test_evolution_ui.js",
+      "sha256": "ed6f40916dfb780fc52f58c4727c1ee5d90b4e9f74d03646a7f59eb569eb21bf",
+      "bytes": 1357
+    },
+    {
       "path": "tests/test_infrastructure.py",
       "sha256": "c9b4996901bc550bb9f6f831641163f507cf1fe513ef819e7f13275723628568",
       "bytes": 2874
@@ -147,8 +172,8 @@
     },
     {
       "path": "xagon/alpha_static/app.js",
-      "sha256": "8d1c2499a39d92afb58873a9230b5219b1e78963a595c982e3e6c977f9c37eae",
-      "bytes": 43917
+      "sha256": "c6410714a8eee95a77e5475feb78ccb756bcb060c99ee8af5d91693df69060e9",
+      "bytes": 45272
     },
     {
       "path": "xagon/alpha_static/index.html",
@@ -192,8 +217,8 @@
     },
     {
       "path": "xagon/fusion_store.py",
-      "sha256": "49798f2b139b409025330f85fbc00985da291efbe6514cd81a4950c4cd9e5bf4",
-      "bytes": 17653
+      "sha256": "ff80dbbae338013574cc4d4eaf1b2e1e3034084bd4603c24dce1709e63d4a58e",
+      "bytes": 23372
     },
     {
       "path": "xagon/intelligence_chat.py",
@@ -202,8 +227,8 @@
     },
     {
       "path": "xagon/intelligence_store.py",
-      "sha256": "252489daed3be53efa349c5e852c0f7af9756e326e3ed114e8d552d68d5c8d06",
-      "bytes": 11444
+      "sha256": "db146b3b5724ce5fea5b7078bb6b02a5db6816f8917a996dd0bc25d50374819d",
+      "bytes": 12085
     },
     {
       "path": "xagon/knowledge_store.py",
